@@ -8,6 +8,7 @@ export const Container = styled.View`
 export const ShapeContainer = styled(Animated.View)`
   width: 100px;
   height: 100px;
+  position: absolute;
   align-items: center;
   justify-content: center;
 `;

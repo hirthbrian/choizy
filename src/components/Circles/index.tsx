@@ -20,9 +20,10 @@ const Circles = ({ color }) => {
   const dragGesture = Gesture.Pan()
     .onBegin((e) => {
       opacity.value = 1;
+      scale.value = 1;
       rotation.value = withTiming(360, { duration: 1000 });
       progress.value = withTiming(100, { duration: 1000 });
-      scale.value = withRepeat(withTiming(1.2, { duration: 500 }), -1, true);
+      scale.value = withRepeat(withTiming(1.1, { duration: 500 }), -1, true);
       translate.value = {
         x: e.absoluteX - 50,
         y: e.absoluteY - 50,
@@ -35,10 +36,12 @@ const Circles = ({ color }) => {
       };
     })
     .onFinalize(() => {
-      rotation.value = withTiming(0, { duration: 700 });
-      progress.value = withTiming(0, { duration: 700 });
-      // opacity.value = 0;
-      scale.value = 1;
+      const toZero = () => withTiming(0, { duration: 700 });
+
+      scale.value = toZero();
+      opacity.value = toZero();
+      rotation.value = toZero();
+      progress.value = toZero();
     });
 
   const aes = useAnimatedStyle(() => ({
@@ -56,8 +59,8 @@ const Circles = ({ color }) => {
         <ShapeContainer style={aes}>
           <Circle color={color} />
           <Arc
-            color={color}
             size={110}
+            color={color}
             strokeWidth={10}
             rotation={rotation}
             progress={progress}

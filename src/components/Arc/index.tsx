@@ -7,8 +7,8 @@ import Svg, { Circle } from "react-native-svg";
 import { CIRCLE } from "./consts";
 import { Props } from "./types";
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const Arc = ({ size, strokeWidth, color, rotation, progress }: Props) => {
   const radius = (size - strokeWidth) / 2;
