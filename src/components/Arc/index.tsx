@@ -1,68 +1,42 @@
-import { useEffect } from "react";
 import Animated, {
-  withTiming,
-  useSharedValue,
-  useDerivedValue,
   useAnimatedProps,
-  withRepeat,
+  useAnimatedStyle,
 } from "react-native-reanimated";
-import Svg, { Path, Circle } from "react-native-svg";
+import Svg, { Circle } from "react-native-svg";
 
+import { CIRCLE } from "./consts";
 import { Props } from "./types";
-import { makeArcPath, degreesToRadians } from "./utils";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
-const Arc = ({ startAngle, endAngle, size, strokeWidth, color }: Props) => {
-  const theta = useSharedValue(2 * Math.PI);
-
-  const path = makeArcPath(
-    strokeWidth / 2,
-    strokeWidth / 2,
-    degreesToRadians(startAngle),
-    degreesToRadians(endAngle),
-    size / 2 - strokeWidth / 2
-  );
-
-  const innerRadius = size / 2 - strokeWidth / 2;
-  const circumfrence = 2 * Math.PI * innerRadius;
-
-  const invertedCompletion = (percentage: number) => (100 - percentage) / 100;
+const Arc = ({ size, strokeWidth, color, rotation, progress }: Props) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumfrence = CIRCLE * radius;
+  const halfSize = size / 2;
 
   const animatedProps = useAnimatedProps(() => ({
-    strokeDashoffset: withRepeat(
-      withTiming(theta.value * innerRadius, { duration: 500 }),
-      -1,
-      true
-    ),
+    strokeDashoffset: radius * CIRCLE * ((100 - progress.value) / 100),
   }));
 
-  useEffect(() => {
-    theta.value = 2 * Math.PI * invertedCompletion(80);
-  }, []);
+  const aes = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value - 90}deg` }],
+  }));
 
   return (
-    <Svg width={size} height={size}>
+    <AnimatedSvg width={size} height={size} style={aes}>
       <AnimatedCircle
-        cx={size / 2}
-        cy={size / 2}
-        r={innerRadius}
+        r={radius}
+        cx={halfSize}
+        cy={halfSize}
         stroke={color}
-        strokeDasharray={`${circumfrence} ${circumfrence}`}
         strokeWidth={strokeWidth}
-        strokeDashoffset={2 * Math.PI * (innerRadius * 0.5)}
-        strokeLinecap="round"
         animatedProps={animatedProps}
+        origin={`${halfSize}, ${halfSize}`}
+        strokeDasharray={`${circumfrence} ${circumfrence}`}
+        strokeDashoffset={radius * CIRCLE * (100 - progress.value / 100)}
       />
-      {/* <Animated.View>
-        <Path
-          d={path}
-          strokeWidth={strokeWidth}
-          stroke={color}
-          strokeLinecap="round"
-        />
-      </Animated.View> */}
-    </Svg>
+    </AnimatedSvg>
   );
 };
 

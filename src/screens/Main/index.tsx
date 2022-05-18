@@ -4,7 +4,7 @@ import { Container } from "./styles";
 const Main = () => {
   return (
     <Container>
-      <Circles />
+      <Circles color="grey" />
     </Container>
   );
 };
